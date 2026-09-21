@@ -43,6 +43,16 @@ function App() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   const portfolioSectionRef = useRef<HTMLDivElement>(null);
+  const loaderHiddenRef = useRef(false);
+
+  const hideLoader = () => {
+    if (loaderHiddenRef.current) return;
+    loaderHiddenRef.current = true;
+    const loader = document.getElementById('app-loader');
+    const root = document.getElementById('root');
+    if (loader) loader.classList.add('hidden');
+    if (root) root.classList.add('app-ready');
+  };
 
   // Detect mobile once at mount; update only on orientation change, not scroll.
   const [mobile, setMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
@@ -60,8 +70,14 @@ function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const startTime = performance.now();
+    const MIN_LOAD_TIME = 1500;
     Promise.all([heroDesktopHtml, heroMobileHtml]).then(([desktop, mobile]) => {
-      if (!cancelled) setHeroHtml({ desktop, mobile });
+      if (cancelled) return;
+      setHeroHtml({ desktop, mobile });
+      const elapsed = performance.now() - startTime;
+      const delay = Math.max(0, MIN_LOAD_TIME - elapsed);
+      setTimeout(hideLoader, delay);
     });
     return () => { cancelled = true; };
   }, []);

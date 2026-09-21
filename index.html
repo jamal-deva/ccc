@@ -59,6 +59,14 @@
       .click-wrapper{position:relative;overflow:hidden}
       .tag-pill{display:inline-flex;align-items:center;font-size:.7rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .6rem;border-radius:100px;background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.08)}
       @media(prefers-reduced-motion:reduce){.hero-enter{opacity:1;transform:none;animation:none}}
+      /* Pre-React loader — visible before JS loads */
+      #app-loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#f5f2ec;transition:opacity .8s ease}
+      #app-loader.hidden{opacity:0;pointer-events:none}
+      #app-loader-dot{width:10px;height:10px;border-radius:50%;background:#c9a84c;box-shadow:0 0 12px rgba(201,168,76,.6),0 0 24px rgba(201,168,76,.3);animation:loader-pulse 1.2s ease-in-out infinite}
+      @keyframes loader-pulse{0%,100%{transform:scale(.7);opacity:.4}50%{transform:scale(1.3);opacity:1}}
+      @media(prefers-reduced-motion:reduce){#app-loader-dot{animation:none;transform:none;opacity:.8}}
+      #root{opacity:0;transition:opacity .8s ease}
+      #root.app-ready{opacity:1}
     </style>
 
     <!-- Critical fonts first (Bebas Neue = hero name, IBM Plex Sans = body) -->
@@ -71,6 +79,7 @@
 
   </head>
   <body>
+    <div id="app-loader"><div id="app-loader-dot"></div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
   </body>
