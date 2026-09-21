@@ -4,7 +4,7 @@ import { Mail, Instagram } from 'lucide-react';
 import { HeroDesign } from './components/HeroDesign';
 import { useHeroMorph } from './hooks/useHeroMorph';
 
-const VideoThumbnail = lazy(() => import('./components/VideoThumbnail'));
+const Portfolio = lazy(() => import('./components/Portfolio'));
 const heroDesktopHtml = import('./hero/hero-desktop.html?raw').then(m => m.default);
 const heroMobileHtml = import('./hero/hero-mobile.html?raw').then(m => m.default);
 
@@ -28,44 +28,12 @@ const mobileImages: HeroImage[] = [
 
 const desktopImages: HeroImage[] = [
   { src: '/pc/me.webp',    delay: 2.2, isStatic: true,  noHover: false, morph: 'figure', zIndex: 2 },
-  { src: '/pc/me 2.webp',  delay: 2.4, isStatic: true,  noHover: false, morph: 'me2', zIndex: 3 },
+  { src: '/pc/me%202.webp',  delay: 2.4, isStatic: true,  noHover: false, morph: 'me2', zIndex: 3 },
 ];
 
 // Fixed canvas sizes of the exported hero designs
 const HERO_DESKTOP = { width: 4591, height: 2350 };
 const HERO_MOBILE  = { width: 1080, height: 1920 };
-
-const socialVideos = Array.from({ length: 12 }, (_, i) =>
-  `https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/reels/${i + 1}.webm`
-);
-
-const featuredVideos = [
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/1.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/2%2C5%2C6%2C8%2C9/2.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/3.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/4.mp4",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/2%2C5%2C6%2C8%2C9/5.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/2%2C5%2C6%2C8%2C9/6.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/7.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/2%2C5%2C6%2C8%2C9/8.webm",
-  "https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/2%2C5%2C6%2C8%2C9/9.webm",
-];
-
-const stats = [
-  { value: '3+', label: 'Years Experience'},
-  { value: '99+', label: 'Projects Delivered' },
-  { value: '12', label: 'Social Formats' },
-  { value: '20+', label: 'Happy Clients' },
-];
-
-const skills = [
-  { name: 'Motion Design'},
-  { name: 'Brand Films'},
-  { name: 'Social Content'},
-  { name: 'Visual Identity'},
-  { name: 'Art Direction'},
-  { name: 'Storytelling'},
-];
 
 function App() {
   const [showContact, setShowContact] = useState(false);
@@ -96,6 +64,16 @@ function App() {
       if (!cancelled) setHeroHtml({ desktop, mobile });
     });
     return () => { cancelled = true; };
+  }, []);
+
+  // Prefetch the portfolio and video-thumbnail chunks shortly after the
+  // hero renders so they're already cached when the user scrolls down.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void import('./components/Portfolio');
+      void import('./components/VideoThumbnail');
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   // Defer portfolio mounting until the user scrolls or is idle — keeps the
@@ -284,7 +262,7 @@ function App() {
                 }}
               >
                 <div className={`w-full h-full ${img.morph === 'figure' ? 'hero-rig-figure' : img.morph === 'me2' ? 'hero-me2' : ''}`}>
-                  <img src={img.src} alt="" decoding="async" fetchPriority="high" className={`${img.isSmall ? 'w-full h-auto' : 'w-full h-full object-contain'} ${img.src.includes('me 2') ? 'hero-img-me2' : 'hero-img-me'}`} />
+                  <img src={img.src} alt="" decoding="async" fetchPriority="high" className={`${img.isSmall ? 'w-full h-auto' : 'w-full h-full object-contain'} ${img.morph === 'me2' ? 'hero-img-me2' : 'hero-img-me'}`} />
                 </div>
               </ClickWrapper>
             ))}
@@ -351,149 +329,12 @@ function App() {
         }}
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20">
-
-          {!portfolioReady ? (
-            <div style={{ minHeight: '60vh' }} />
+          {portfolioReady ? (
+            <Suspense fallback={<div style={{ minHeight: '60vh' }} />}>
+              <Portfolio />
+            </Suspense>
           ) : (
-          <>
-          {/* Header */}
-          <div className="text-center mb-20">
-        
-              <h2 className="syne text-black/90 mb-5 leading-none"
-                  style={{ fontSize: 'clamp(3rem, 8vw, 7rem)', letterSpacing: '0.04em' }}>
-                PORTFOLIO
-              </h2>
-          
-          
-         
-              <p className="ibm-font text-black/55 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-                Visual stories crafted to move people — from scroll-stopping reels to brand-defining films.
-              </p>
-         
-
-            {/* Skill tags */}
-            <div className="flex flex-wrap justify-center gap-2 mt-6">
-              {skills.map((s) => (
-                <ClickWrapper
-                  key={s.name}
-                
-                  glowColor="rgba(201,168,76,0.3)"
-                  className="tag-pill"
-                >
-                  {s.name}
-                </ClickWrapper>
-              ))}
-            </div>
-          </div>
-
-          {/* Stats row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
-            {stats.map((s, i) => (
-              <div
-                key={i}
-                className="stat-card"
-                style={{
-                  background: 'rgba(0,0,0,0.04)',
-                  border: '1px solid rgba(0,0,0,0.07)',
-                  animationDelay: `${i * 0.4}s`,
-                  borderRadius: '1rem',
-                  padding: '1.5rem',
-                  textAlign: 'center',
-                }}
-              >
-                <div className="syne font-bold text-black/90 stat-number-pulse"
-                     style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', animationDelay: `${i * 0.4}s` }}>
-                  {s.value}
-                </div>
-                <div className="ibm-font text-xs uppercase tracking-widest mt-1" style={{ color: 'var(--warm-gray)' }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Showreel */}
-          <div className="mb-20">
-            <ClickWrapper
-              scrollTo="#showreel"
-              glowColor="rgba(201,168,76,0.3)"
-              className="section-rule section-rule-interactive"
-            >
-              <span className="syne text-sm font-semibold tracking-[0.25em] uppercase text-black/40 flex items-center gap-2">
-                <span className="gold-dot" />
-                SHOW REEL
-              </span>
-            </ClickWrapper>
-            <div id="showreel" className="max-w-5xl mx-auto rounded-2xl overflow-hidden"
-                 style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
-              <Suspense fallback={null}>
-              <VideoThumbnail
-                src="https://cdn.jsdelivr.net/gh/Aamirnaqvi-mal/Videos@main/Portfolio/long/2,5,6,8,9/1.mp4"
-                title="SHOW REEL 2026"
-                isShowreel={true}
-                thumbnailIndex={1}
-              />
-              </Suspense>
-            </div>
-          </div>
-
-          {/* Social Content */}
-          <div className="mb-20">
-            <ClickWrapper
-              scrollTo="#social"
-              glowColor="rgba(201,168,76,0.3)"
-              className="section-rule section-rule-interactive"
-            >
-              <span className="syne text-sm font-semibold tracking-[0.25em] uppercase text-black/40 flex items-center gap-2">
-                <span className="gold-dot" />
-                SOCIAL CONTENT
-              </span>
-            </ClickWrapper>
-            <div id="social" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-3">
-              {socialVideos.map((url, i) => (
-                <Suspense key={i} fallback={null}>
-                <VideoThumbnail
-                  src={url}
-                  title={`REEL ${String(i + 1).padStart(2, '0')}`}
-                  aspectRatio="vertical"
-                  thumbnailIndex={i + 11}
-                />
-                </Suspense>
-              ))}
-            </div>
-          </div>
-
-          {/* Featured Work */}
-          <div className="mb-20">
-            <ClickWrapper
-              scrollTo="#featured"
-              glowColor="rgba(201,168,76,0.3)"
-              className="section-rule section-rule-interactive"
-            >
-              <span className="syne text-sm font-semibold tracking-[0.25em] uppercase text-black/40 flex items-center gap-2">
-                <span className="gold-dot" />
-                FEATURED WORK
-              </span>
-            </ClickWrapper>
-            <div id="featured" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {featuredVideos.map((url, i) => (
-                <Suspense key={i} fallback={null}>
-                <VideoThumbnail
-                  src={url}
-                  title={`PROJECT ${String(i + 1).padStart(2, '0')}`}
-                  isShowreel={false}
-                  thumbnailIndex={i + 2}
-                />
-                </Suspense>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom disclaimer */}
-            <p className="text-center ibm-font text-xs mt-12 pb-4" >
-              All content is original work. Brands and clients belong to their respective owners.
-            </p>
-          </>
+            <div style={{ minHeight: '60vh' }} />
           )}
         </div>
       </div>
@@ -505,11 +346,11 @@ function App() {
           className={`fixed bottom-0 left-0 right-0 w-full overflow-hidden flex flex-col items-center justify-center z-30 bg-transparent opacity-0 animate-fade-in-delayed px-6`}
           style={{
             height: mobile ? '100svh' : '100vh',
-            animationDelay: '0.2s', 
+            animationDelay: '0.2s',
             animationFillMode: 'forwards',
             pointerEvents: 'auto'
           }}
-        > 
+        >
          {/* Main Heading */}
           <h2 className="text-4xl sm:text-5xl md:text-7xl font-bosenAlt text-[#181f22] text-center mb-0 tracking-wide max-w-4xl">
             LET'S START A CONVERSATION
